@@ -1,10 +1,21 @@
-const express = require("express");
 const dotenv = require("dotenv");
-const app = express();
 dotenv.config();
 
+const express = require("express");
+const connectDB = require("./db/connection");
+const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+connectDB()
+  .then((connectionInstance) => {
+    console.log(
+      `Connection established: ${connectionInstance.connection.host}`
+    );
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error(`Error connecting to the database: ${err.message}`);
+    process.exit(1);
+  });
