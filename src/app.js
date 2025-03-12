@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const connectDB = require("./db/connection");
 const errorHandler = require("./middlewares/errorMiddleware");
+const userRouter = require("./routes/user.routes");
 const app = express();
 
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,9 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ limit: "16kb", extended: true }));
+
+// Routes setup
+app.use("/api/v1/user", userRouter);
 
 // Error handling middleware
 app.use(errorHandler);
