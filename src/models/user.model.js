@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
@@ -30,6 +31,26 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.statics.findByEmail = function (email) {
+  return this.findOne({ email });
+};
+
+// Hash the password before saving it to the database
+userSchema.pre("save", async function (next) {
+  try {
+    if (!this.isModified("password")) {
+      next();
+    }
+    this.password = await bcrypt.hash(
+      this.password,
+      parseInt(process.env.SALT_ROUNDS) || 10
+    );
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
