@@ -36,6 +36,19 @@ userSchema.statics.findByEmail = function (email) {
   return this.findOne({ email });
 };
 
+// Compare the password entered by the user with the hashed password stored in the database
+userSchema.methods.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+// Generate a JWT token for the user
+userSchema.methods.generateToken = function () {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
+};
+
+
 // Hash the password before saving it to the database
 userSchema.pre("save", async function (next) {
   try {
