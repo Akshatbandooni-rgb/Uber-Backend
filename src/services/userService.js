@@ -18,6 +18,22 @@ class UserService {
       throw error;
     }
   }
+  
+  async loginUser({ email, password }) {
+    try {
+      const user = await User.findByEmail(email);
+      if (!user) {
+        throw new APIError(Constants.errors.USER_NOT_FOUND, 404);
+      }
+      const isPasswordValid = await user.comparePassword(password);
+      if (!isPasswordValid) {
+        throw new APIError("Invalid Credentials", 401);
+      }
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = new UserService();

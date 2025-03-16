@@ -17,6 +17,25 @@ const registerUser = async (req, res, next) => {
   }
 };
 
+const loginUser = async (req, res, next) => {
+  try {
+    //TODO: Validate Input
+    const user = await userService.loginUser(req.body);
+    const successResponse = new APIResponse("User login successful", 200);
+    const token = await user.generateAuthToken();
+    //set up token in cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+    res
+      .status(successResponse.statusCode)
+      .json({ ...successResponse.toJSON(), data: user });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerUser,
 };
