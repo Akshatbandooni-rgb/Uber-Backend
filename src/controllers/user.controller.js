@@ -22,7 +22,7 @@ const loginUser = async (req, res, next) => {
     //TODO: Validate Input
     const user = await userService.loginUser(req.body);
     const successResponse = new APIResponse("User login successful", 200);
-    const token = await user.generateAuthToken();
+    const token = await user.generateJwtToken();
     //set up token in cookie
     res.cookie("token", token, {
       httpOnly: true,
